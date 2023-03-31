@@ -92,6 +92,9 @@ class _Booking_pageState extends State<Booking_page> {
                     var paymentmethod = snapshot.data!.docs[index]
                             ['paymethod'] ??
                         "".toString();
+                    var paymentverify = snapshot.data!.docs[index]
+                            ['paymentverify'] ??
+                        "".toString();
                     return Card(
                       elevation: 5,
                       child: Padding(
@@ -257,19 +260,62 @@ class _Booking_pageState extends State<Booking_page> {
                                       ],
                                     ),
                                     const SizedBox(height: 5),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        left: 50,
-                                      ),
-                                      child: Text(
-                                          paymentmethod == "cash"
-                                              ? "Cash Payment \$$price"
-                                              : "Unpaid \$$price",
-                                          style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.blue)),
-                                    ),
+                                    paymentmethod == "cash"
+                                        ? Row(
+                                            children: [
+                                              paymentverify != "verify"
+                                                  ? Container(
+                                                      height: 40,
+                                                      width: 100,
+                                                      child: BlueBtn(
+                                                        onPressed: () {
+                                                          firestore
+                                                              .doc(id)
+                                                              .update({
+                                                            'paymentverify':
+                                                                "verify"
+                                                          });
+                                                          setState(() {});
+                                                        },
+                                                        title: "Verify",
+                                                      ),
+                                                    )
+                                                  : Row(
+                                                      children: [
+                                                        Text("Verified",
+                                                            style: const TextStyle(
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                color: Colors
+                                                                    .green)),
+                                                        SizedBox(
+                                                          width: 2.w,
+                                                        ),
+                                                        Icon(
+                                                          Icons.check,
+                                                          color: Colors.green,
+                                                          size: 18.h,
+                                                        )
+                                                      ],
+                                                    ),
+                                              SizedBox(
+                                                width: 10.w,
+                                              ),
+                                              Text("Cash Payment \$$price",
+                                                  style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: Colors.blue)),
+                                            ],
+                                          )
+                                        : Text("UnPaid \$$price",
+                                            style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.blue)),
                                   ],
                                 ),
                               ],
